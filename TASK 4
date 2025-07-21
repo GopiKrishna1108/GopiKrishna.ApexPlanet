@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task 4: Full Project Implementation</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f3f3f3;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      margin: 20px auto;
+      border-radius: 10px;
+      max-width: 800px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    input, textarea, select, button {
+      padding: 8px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .project-card, .todo-item, .product-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Task 4: Full Project Implementation</h1>
+
+  <!-- 1. Portfolio Section -->
+  <div class="section">
+    <h2>1. Personal Portfolio Website</h2>
+    <div class="project-card">
+      <h3>About Me</h3>
+      <p>Hello! I’m a passionate developer eager to build impactful applications using modern web technologies.</p>
+    </div>
+    <div class="project-card">
+      <h3>Projects</h3>
+      <ul>
+        <li>To-Do App with LocalStorage</li>
+        <li>Product Filter Page</li>
+      </ul>
+    </div>
+    <div class="project-card">
+      <h3>Contact</h3>
+      <p>Email: student@example.com</p>
+    </div>
+  </div>
+
+  <!-- 2. To-Do App -->
+  <div class="section">
+    <h2>2. To-Do List with Local Storage</h2>
+    <input type="text" id="todoInput" placeholder="Enter a task">
+    <button onclick="addTodo()">Add Task</button>
+    <div id="todoList"></div>
+  </div>
+
+  <!-- 3. Product Listing -->
+  <div class="section">
+    <h2>3. Product Listing with Filter and Sort</h2>
+    <div class="filters">
+      <select id="categoryFilter" onchange="filterProducts()">
+        <option value="all">All Categories</option>
+        <option value="electronics">Electronics</option>
+        <option value="books">Books</option>
+      </select>
+      <select id="sortOption" onchange="filterProducts()">
+        <option value="default">Sort by</option>
+        <option value="price">Price</option>
+        <option value="rating">Rating</option>
+      </select>
+    </div>
+    <div id="productContainer"></div>
+  </div>
+
+  <script>
+    // --- To-Do App ---
+    const todoList = document.getElementById("todoList");
+    let todos = JSON.parse(localStorage.getItem("todos")) || [];
+
+    function renderTodos() {
+      todoList.innerHTML = "";
+      todos.forEach((todo, index) => {
+        const div = document.createElement("div");
+        div.className = "todo-item";
+        div.textContent = todo;
+        div.onclick = () => removeTodo(index);
+        todoList.appendChild(div);
+      });
+    }
+
+    function addTodo() {
+      const input = document.getElementById("todoInput");
+      if (input.value.trim() !== "") {
+        todos.push(input.value);
+        localStorage.setItem("todos", JSON.stringify(todos));
+        input.value = "";
+        renderTodos();
+      }
+    }
+
+    function removeTodo(index) {
+      todos.splice(index, 1);
+      localStorage.setItem("todos", JSON.stringify(todos));
+      renderTodos();
+    }
+
+    renderTodos();
+
+    // --- Product Listing ---
+    const products = [
+      { name: "Smartphone", category: "electronics", price: 699, rating: 4.5 },
+      { name: "Laptop", category: "electronics", price: 999, rating: 4.7 },
+      { name: "Book: JavaScript", category: "books", price: 29, rating: 4.8 },
+      { name: "Headphones", category: "electronics", price: 199, rating: 4.3 },
+      { name: "Book: CSS Guide", category: "books", price: 19, rating: 4.1 }
+    ];
+
+    function filterProducts() {
+      const category = document.getElementById("categoryFilter").value;
+      const sort = document.getElementById("sortOption").value;
+      let filtered = [...products];
+
+      if (category !== "all") {
+        filtered = filtered.filter(p => p.category === category);
+      }
+
+      if (sort === "price") {
+        filtered.sort((a, b) => a.price - b.price);
+      } else if (sort === "rating") {
+        filtered.sort((a, b) => b.rating - a.rating);
+      }
+
+      const container = document.getElementById("productContainer");
+      container.innerHTML = "";
+      filtered.forEach(product => {
+        const div = document.createElement("div");
+        div.className = "product-card";
+        div.innerHTML = `<strong>${product.name}</strong><br>Category: ${product.category}<br>Price: $${product.price}<br>Rating: ${product.rating}`;
+        container.appendChild(div);
+      });
+    }
+
+    filterProducts();
+  </script>
+</body>
+</html>
